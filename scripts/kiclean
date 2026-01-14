@@ -201,7 +201,7 @@ recursive_clean()
 	done
 }
 
-while getopts hfpvr optname 
+while getopts hfpvrZ optname 
 do
 	case $optname in
 		h)	help
