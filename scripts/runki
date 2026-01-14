@@ -680,7 +680,11 @@ getcollectldata()
 	   echo "=== Copying Collectl logs ... " | tee -a ki.err.$tag
 	   cd /var/log/collectl
            cp -p /etc/collectl.conf collectl.conf.$tag
-   	   tar -czf $KIDIR/collectl.$tag.tgz collectl.conf.$tag `find . -mtime -1|grep raw`
+           if [ $do_pgzip -eq 1 ] ; then
+               tar -cf - collectl.conf.$tag `find . -mtime -1|grep raw` | pigz -c - > $KIDIR/collectl.$tag.tgz
+           else
+               tar -czf $KIDIR/collectl.$tag.tgz collectl.conf.$tag `find . -mtime -1|grep raw`
+           fi
            rm -f collectl.conf.$tag
 	   cd $KIDIR
 	fi
@@ -689,7 +693,11 @@ getcollectldata()
 	       echo "=== Copying MeasureWare logs ... " | tee -a ki.err.$tag
 	       cd /var/opt/perf/datafiles
                cp ../parm parm.$tag
-   	       tar -czf $KIDIR/MW.$tag.tgz parm.$tag log*
+               if [ $do_pgzip -eq 1 ] ; then
+                   tar -cf - parm.$tag log* | pigz -c - > $KIDIR/MW.$tag.tgz
+               else
+                   tar -czf $KIDIR/MW.$tag.tgz parm.$tag log*
+               fi
                rm -f parm.$tag
 	       cd $KIDIR
 	   fi
